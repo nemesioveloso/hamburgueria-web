@@ -1,4 +1,3 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,6 +10,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
+import { MouseEvent, useEffect, useState } from 'react';
 
 const pages = [
     { id: 1, nome: 'Products', rota: '/products' },
@@ -26,9 +26,13 @@ const redes = [
 ];
 
 export function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isScrolled2, setIsScrolled2] = useState(false);
+    console.log(isScrolled, 'isScrolled');
+    
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
 
@@ -36,8 +40,27 @@ export function ResponsiveAppBar() {
         setAnchorElNav(null);
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+          setIsScrolled(window.scrollY > 40);
+          setIsScrolled2(window.scrollY > 65);
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
     return (
-        <AppBar position="static" color='transparent'>
+        <AppBar 
+        position={isScrolled ? 'fixed' : 'static'}
+        color='transparent'
+        sx={{
+            transition: "transform 3s ease-in-out",
+            transform: isScrolled ? (isScrolled2 ? "translateY(0)" : "translateY(-100%)") : "translateY(0)",
+            backgroundColor: isScrolled ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.5)",
+            boxShadow: isScrolled ? 3 : 0,
+          }}
+        >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
